@@ -3,61 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Películas</title>
+    <title>Gestión de Asistencia</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Administrador de Películas</h1>
 
-        <form id="movie-form">
-            <input type="hidden" id="movie-id">
-            
-            <div class="form-group">
-                <label for="title">Título:</label>
-                <input type="text" id="title" placeholder="Ej: El Padrino" required>
+        <div id="login-view">
+            <h1>Control de Asistencia</h1>
+            <p>Seleccione su rol para continuar (simulación):</p>
+            <div class="login-buttons">
+                <button id="login-admin" class="btn-admin">Ingresar como Administrador</button>
+                <button id="login-worker" class="btn-worker">Ingresar como Trabajador</button>
+            </div>
+        </div>
+
+        <div id="app-view" class="hidden">
+            <header>
+                <h1 id="app-title">Panel de Asistencia</h1>
+                <button id="logout-button" class="btn-delete">Cerrar Sesión</button>
+            </header>
+
+            <div id="worker-dashboard" class="dashboard hidden">
+                <h2>Bienvenido, Trabajador</h2>
+                
+                <div class="card">
+                    <h3>Marcar Asistencia</h3>
+                    <p>Estado actual: <strong id="worker-status">Fuera de Turno</strong></p>
+                    <button id="clock-in" class="btn-guardar">Marcar Entrada</button>
+                    <button id="clock-out" class="btn-delete">Marcar Salida</button>
+                    <p id="clock-message" class="message"></p>
+                </div>
+
+                <div class="card">
+                    <h3>Solicitar Ausencias / Vacaciones</h3>
+                    <form id="request-form">
+                        <div class="form-group">
+                            <label for="request-type">Tipo:</label>
+                            <select id="request-type" required>
+                                <option value="vacaciones">Vacaciones</option>
+                                <option value="licencia_medica">Licencia Médica</option>
+                                <option value="permiso">Permiso</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="start-date">Fecha de Inicio:</label>
+                            <input type="date" id="start-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end-date">Fecha de Fin:</label>
+                            <input type="date" id="end-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reason">Motivo:</label>
+                            <textarea id="reason" rows="2" placeholder="Motivo de la solicitud..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-guardar">Enviar Solicitud</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3>Mis Marcaciones (Historial)</h3>
+                    <table id="worker-marks-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="worker-marks-list"></tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>Mis Solicitudes</h3>
+                    <table id="worker-requests-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="worker-requests-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-dashboard" class="dashboard hidden">
+                <h2>Panel de Administración</h2>
+                
+                <div class="card">
+                    <h3>Solicitudes Pendientes</h3>
+                    <table id="admin-requests-table">
+                        <thead>
+                            <tr>
+                                <th>Trabajador</th>
+                                <th>Tipo</th>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th>Motivo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-requests-list"></tbody>
+                    </table>
+                    <p id="no-requests-message" class="message">No hay solicitudes pendientes.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Historial de Marcaciones (Todos)</h3>
+                    <table id="admin-marks-table">
+                        <thead>
+                            <tr>
+                                <th>Trabajador</th>
+                                <th>Fecha y Hora</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-marks-list"></tbody>
+                    </table>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="director">Director:</label>
-                <input type="text" id="director" placeholder="Ej: Francis Ford Coppola" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="year">Año:</label>
-                <input type="number" id="year" placeholder="Ej: 1972" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="genre">Género:</label>
-                <input type="text" id="genre" placeholder="Ej: Drama" required>
-            </div>
-            
-            <button type="submit" class="btn-guardar">Guardar Película</button>
-            <button type="button" class="btn-cancelar" id="btn-cancel" style="display:none;">Cancelar Edición</button>
-        </form>
-
-        <hr>
-
-        <h2>Lista de Películas</h2>
-        
-        <table id="movie-table">
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>Director</th>
-                    <th>Año</th>
-                    <th>Género</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="movie-list">
-                </tbody>
-        </table>
-        
-        <p id="empty-message" style="display:none;">No hay películas en la lista.</p>
-
+        </div>
     </div>
 
     <script src="script.js"></script>

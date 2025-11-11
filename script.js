@@ -2,175 +2,261 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. SELECCIÓN DE ELEMENTOS DEL DOM ---
-    const movieForm = document.getElementById('movie-form');
-    const movieIdInput = document.getElementById('movie-id');
-    const titleInput = document.getElementById('title');
-    const directorInput = document.getElementById('director');
-    const yearInput = document.getElementById('year');
-    const genreInput = document.getElementById('genre');
-    const movieList = document.getElementById('movie-list');
-    const emptyMessage = document.getElementById('empty-message');
-    const btnCancel = document.getElementById('btn-cancel');
+    // Vistas
+    const loginView = document.getElementById('login-view');
+    const appView = document.getElementById('app-view');
+    const workerDashboard = document.getElementById('worker-dashboard');
+    const adminDashboard = document.getElementById('admin-dashboard');
 
-    // --- 2. DATOS ---
-    // Carga las películas desde Local Storage o usa un array vacío
-    let movies = JSON.parse(localStorage.getItem('movies')) || [];
+    // Botones Login/Logout
+    const loginAdminBtn = document.getElementById('login-admin');
+    const loginWorkerBtn = document.getElementById('login-worker');
+    const logoutBtn = document.getElementById('logout-button');
+    const appTitle = document.getElementById('app-title');
 
-    // --- 3. FUNCIONES PRINCIPALES ---
+    // Panel Trabajador
+    const clockInBtn = document.getElementById('clock-in');
+    const clockOutBtn = document.getElementById('clock-out');
+    const workerStatus = document.getElementById('worker-status');
+    const clockMessage = document.getElementById('clock-message');
+    const requestForm = document.getElementById('request-form');
+    const workerMarksList = document.getElementById('worker-marks-list');
+    const workerRequestsList = document.getElementById('worker-requests-list');
 
-    /**
-     * Guarda el array de películas en Local Storage
-     */
-    function saveMovies() {
-        localStorage.setItem('movies', JSON.stringify(movies));
+    // Panel Admin
+    const adminRequestsList = document.getElementById('admin-requests-list');
+    const adminMarksList = document.getElementById('admin-marks-list');
+    const noRequestsMsg = document.getElementById('no-requests-message');
+
+    // --- 2. BASE DE DATOS (SIMULADA CON LOCAL STORAGE) ---
+    let currentUser = null;
+    let users = JSON.parse(localStorage.getItem('users')) || [
+        { id: 1, username: 'admin', role: 'admin', name: 'Admin' },
+        { id: 2, username: 'worker', role: 'worker', name: 'Juan Pérez' }
+        // Se pueden agregar más trabajadores
+    ];
+    let marcaciones = JSON.parse(localStorage.getItem('marcaciones')) || [];
+    let solicitudes = JSON.parse(localStorage.getItem('solicitudes')) || [];
+
+    // --- 3. FUNCIONES DE DATOS ---
+    function saveData() {
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('marcaciones', JSON.stringify(marcaciones));
+        localStorage.setItem('solicitudes', JSON.stringify(solicitudes));
     }
 
-    /**
-     * Muestra (renderiza) la lista de películas en la tabla.
-     * Esta es la función "READ" del CRUD.
-     */
-    function renderMovies() {
-        // Limpia la tabla actual
-        movieList.innerHTML = '';
+    // --- 4. LÓGICA DE NAVEGACIÓN Y SESIÓN ---
 
-        // Comprueba si hay películas
-        if (movies.length === 0) {
-            emptyMessage.style.display = 'block';
-            return;
+    // Simula el login
+    function login(role) {
+        if (role === 'admin') {
+            currentUser = users.find(u => u.role === 'admin');
+            appTitle.textContent = `Panel de Administración (${currentUser.name})`;
+        } else {
+            currentUser = users.find(u => u.role === 'worker'); // Usamos el primer trabajador
+            appTitle.textContent = `Panel de Trabajador (${currentUser.name})`;
         }
         
-        emptyMessage.style.display = 'none';
+        loginView.classList.add('hidden');
+        appView.classList.remove('hidden');
+        renderDashboard();
+    }
 
-        // Recorre el array y crea una fila <tr> por cada película
-        movies.forEach(movie => {
+    function logout() {
+        currentUser = null;
+        appView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+        adminDashboard.classList.add('hidden');
+        workerDashboard.classList.add('hidden');
+    }
+
+    // Muestra el panel correcto según el rol
+    function renderDashboard() {
+        if (!currentUser) return;
+
+        if (currentUser.role === 'admin') {
+            adminDashboard.classList.remove('hidden');
+            workerDashboard.classList.add('hidden');
+            renderAdminView();
+        } else {
+            workerDashboard.classList.remove('hidden');
+            adminDashboard.classList.add('hidden');
+            renderWorkerView();
+        }
+    }
+
+    // --- 5. LÓGICA DEL TRABAJADOR ---
+
+    function renderWorkerView() {
+        // Actualizar estado (Simplificado)
+        const ultimaMarca = marcaciones
+            .filter(m => m.userId === currentUser.id)
+            .sort((a, b) => b.timestamp - a.timestamp)[0];
+        
+        if (ultimaMarca && ultimaMarca.type === 'entrada') {
+            workerStatus.textContent = 'En Turno';
+            clockInBtn.disabled = true;
+            clockOutBtn.disabled = false;
+        } else {
+            workerStatus.textContent = 'Fuera de Turno';
+            clockInBtn.disabled = false;
+            clockOutBtn.disabled = true;
+        }
+        clockMessage.textContent = '';
+        
+        // Renderizar tablas
+        renderWorkerMarks();
+        renderWorkerRequests();
+    }
+
+    function handleClockIn() {
+        const nuevaMarca = {
+            id: Date.now(),
+            userId: currentUser.id,
+            name: currentUser.name,
+            timestamp: Date.now(),
+            type: 'entrada'
+        };
+        marcaciones.push(nuevaMarca);
+        saveData();
+        renderWorkerView();
+        clockMessage.textContent = `Entrada marcada a las ${new Date(nuevaMarca.timestamp).toLocaleTimeString()}`;
+    }
+
+    function handleClockOut() {
+        const nuevaMarca = {
+            id: Date.now(),
+            userId: currentUser.id,
+            name: currentUser.name,
+            timestamp: Date.now(),
+            type: 'salida'
+        };
+        marcaciones.push(nuevaMarca);
+        saveData();
+        renderWorkerView();
+        clockMessage.textContent = `Salida marcada a las ${new Date(nuevaMarca.timestamp).toLocaleTimeString()}`;
+    }
+
+    function handleRequestSubmit(e) {
+        e.preventDefault();
+        const newRequest = {
+            id: Date.now(),
+            userId: currentUser.id,
+            name: currentUser.name,
+            type: document.getElementById('request-type').value,
+            startDate: document.getElementById('start-date').value,
+            endDate: document.getElementById('end-date').value,
+            reason: document.getElementById('reason').value,
+            status: 'pendiente' // Estados: pendiente, aprobado, rechazado
+        };
+
+        solicitudes.push(newRequest);
+        saveData();
+        renderWorkerRequests();
+        requestForm.reset();
+        alert('Solicitud enviada con éxito.');
+    }
+
+    function renderWorkerMarks() {
+        workerMarksList.innerHTML = '';
+        marcaciones
+            .filter(m => m.userId === currentUser.id)
+            .sort((a, b) => b.timestamp - a.timestamp) // Más nuevas primero
+            .forEach(m => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(m.timestamp).toLocaleString()}</td>
+                    <td>${m.type === 'entrada' ? 'Entrada' : 'Salida'}</td>
+                `;
+                workerMarksList.appendChild(tr);
+            });
+    }
+
+    function renderWorkerRequests() {
+        workerRequestsList.innerHTML = '';
+        solicitudes
+            .filter(s => s.userId === currentUser.id)
+            .sort((a, b) => b.id - a.id) // Más nuevas primero
+            .forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = `status-${s.status}`;
+                tr.innerHTML = `
+                    <td>${s.type}</td>
+                    <td>${s.startDate}</td>
+                    <td>${s.endDate}</td>
+                    <td>${s.status.charAt(0).toUpperCase() + s.status.slice(1)}</td>
+                `;
+                workerRequestsList.appendChild(tr);
+            });
+    }
+
+    // --- 6. LÓGICA DEL ADMINISTRADOR ---
+
+    function renderAdminView() {
+        renderAdminRequests();
+        renderAdminMarks();
+    }
+
+    function renderAdminRequests() {
+        adminRequestsList.innerHTML = '';
+        const pendientes = solicitudes.filter(s => s.status === 'pendiente');
+
+        if (pendientes.length === 0) {
+            noRequestsMsg.style.display = 'block';
+        } else {
+            noRequestsMsg.style.display = 'none';
+        }
+
+        pendientes.forEach(s => {
             const tr = document.createElement('tr');
-            
-            // Define el contenido HTML de la fila
             tr.innerHTML = `
-                <td>${movie.title}</td>
-                <td>${movie.director}</td>
-                <td>${movie.year}</td>
-                <td>${movie.genre}</td>
+                <td>${s.name}</td>
+                <td>${s.type}</td>
+                <td>${s.startDate}</td>
+                <td>${s.endDate}</td>
+                <td>${s.reason || 'N/A'}</td>
                 <td>
-                    <button class="btn-edit" data-id="${movie.id}">Editar</button>
-                    <button class="btn-delete" data-id="${movie.id}">Borrar</button>
+                    <button class="btn-approve" data-id="${s.id}">Aprobar</button>
+                    <button class="btn-reject" data-id="${s.id}">Rechazar</button>
                 </td>
             `;
-
-            // Añade los event listeners a los botones de la fila
-            tr.querySelector('.btn-edit').addEventListener('click', handleEdit);
-            tr.querySelector('.btn-delete').addEventListener('click', handleDelete);
-
-            // Añade la fila a la tabla
-            movieList.appendChild(tr);
+            tr.querySelector('.btn-approve').addEventListener('click', () => handleApproval(s.id, 'aprobado'));
+            tr.querySelector('.btn-reject').addEventListener('click', () => handleApproval(s.id, 'rechazado'));
+            adminRequestsList.appendChild(tr);
         });
     }
 
-    /**
-     * Maneja el envío del formulario (Crear y Actualizar)
-     */
-    function handleFormSubmit(event) {
-        event.preventDefault(); // Evita que la página se recargue
-
-        // Recoge los valores del formulario
-        const id = movieIdInput.value;
-        const title = titleInput.value.trim();
-        const director = directorInput.value.trim();
-        const year = yearInput.value.trim();
-        const genre = genreInput.value.trim();
-
-        // Validación (Punto extra del taller)
-        if (!title || !director || !year || !genre) {
-            alert('Todos los campos son obligatorios.');
-            return;
-        }
-
-        if (id) {
-            // --- Lógica de UPDATE (Actualizar) ---
-            // Si hay un ID, estamos editando una película existente
-            const movieIndex = movies.findIndex(movie => movie.id == id);
-            if (movieIndex > -1) {
-                movies[movieIndex] = { id: Number(id), title, director, year, genre };
-            }
-        } else {
-            // --- Lógica de CREATE (Crear) ---
-            // Si no hay ID, es una película nueva
-            const newMovie = {
-                // Usamos Date.now() como un ID único
-                id: Date.now(), 
-                title,
-                director,
-                year,
-                genre
-            };
-            movies.push(newMovie);
-        }
-
-        // Guarda en Local Storage y actualiza la tabla
-        saveMovies();
-        renderMovies();
-        
-        // Resetea el formulario y el botón de cancelar
-        resetForm();
-    }
-
-    /**
-     * Carga los datos de una película en el formulario para editarla.
-     * Esta es la preparación para "UPDATE".
-     */
-    function handleEdit(event) {
-        const id = event.target.dataset.id;
-        const movieToEdit = movies.find(movie => movie.id == id);
-
-        if (movieToEdit) {
-            // Rellena el formulario con los datos de la película
-            movieIdInput.value = movieToEdit.id;
-            titleInput.value = movieToEdit.title;
-            directorInput.value = movieToEdit.director;
-            yearInput.value = movieToEdit.year;
-            genreInput.value = movieToEdit.genre;
-            
-            // Muestra el botón de cancelar
-            btnCancel.style.display = 'block';
+    function handleApproval(id, newStatus) {
+        const solicitud = solicitudes.find(s => s.id === id);
+        if (solicitud) {
+            solicitud.status = newStatus;
+            saveData();
+            renderAdminView(); // Recarga la vista de admin
         }
     }
 
-    /**
-     * Borra una película de la lista.
-     * Esta es la función "DELETE" del CRUD.
-     */
-    function handleDelete(event) {
-        const id = event.target.dataset.id;
-        
-        // Pide confirmación antes de borrar
-        if (confirm('¿Estás seguro de que quieres borrar esta película?')) {
-            // Filtra el array, quitando la película con el ID seleccionado
-            movies = movies.filter(movie => movie.id != id);
-            
-            // Guarda y actualiza la tabla
-            saveMovies();
-            renderMovies();
-        }
+    function renderAdminMarks() {
+        adminMarksList.innerHTML = '';
+        marcaciones
+            .sort((a, b) => b.timestamp - a.timestamp) // Más nuevas primero
+            .forEach(m => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${m.name}</td>
+                    
+                    <td>${new Date(m.timestamp).toLocaleString()}</td>
+                    <td>${m.type === 'entrada' ? 'Entrada' : 'Salida'}</td>
+                `;
+                adminMarksList.appendChild(tr);
+            });
     }
 
-    /**
-     * Resetea el formulario a su estado inicial
-     */
-    function resetForm() {
-        movieForm.reset();
-        movieIdInput.value = ''; // Limpia el ID oculto
-        btnCancel.style.display = 'none'; // Oculta el botón de cancelar
-    }
-
-
-    // --- 4. INICIALIZACIÓN ---
+    // --- 7. INICIALIZACIÓN DE EVENTOS ---
+    loginAdminBtn.addEventListener('click', () => login('admin'));
+    loginWorkerBtn.addEventListener('click', () => login('worker'));
+    logoutBtn.addEventListener('click', logout);
     
-    // Añade el listener al formulario
-    movieForm.addEventListener('submit', handleFormSubmit);
-    
-    // Añade el listener al botón de cancelar
-    btnCancel.addEventListener('click', resetForm);
-    
-    // Muestra la lista de películas al cargar la página por primera vez
-    renderMovies();
+    clockInBtn.addEventListener('click', handleClockIn);
+    clockOutBtn.addEventListener('click', handleClockOut);
+    requestForm.addEventListener('submit', handleRequestSubmit);
 });

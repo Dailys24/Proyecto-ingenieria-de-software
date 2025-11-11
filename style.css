@@ -1,133 +1,175 @@
-/* Estilos Generales */
+/* --- Estilos Generales --- */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
     color: #333;
-    line-height: 1.6;
     margin: 0;
-    padding: 0;
+    padding: 20px;
 }
 
 .container {
-    width: 80%;
-    max-width: 1000px;
-    margin: 20px auto;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-h1, h2 {
+h1, h2, h3 {
+    color: #1c1e21;
+    margin-top: 0;
+}
+
+h1 {
     text-align: center;
-    color: #2c3e50;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
 }
 
-hr {
-    border: 0;
-    height: 1px;
-    background-color: #ddd;
-    margin: 20px 0;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-/* Estilos del Formulario */
-#movie-form {
+/* --- Clases de Utilidad --- */
+.hidden {
+    display: none !important;
+}
+.message {
+    font-style: italic;
+    color: #555;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* --- Vistas y Paneles --- */
+#login-view {
+    text-align: center;
+}
+.login-buttons {
+    margin-top: 20px;
+}
+
+.dashboard {
     display: grid;
-    /* Creamos 2 columnas para el formulario */
+    /* Dos columnas para los paneles */
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #dddfe2;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Hacer que algunas tarjetas ocupen todo el ancho */
+.card:has(table) {
+    grid-column: 1 / -1;
+}
+
+/* --- Formularios --- */
+form {
+    display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
 }
-
 .form-group {
     display: flex;
     flex-direction: column;
 }
-
 .form-group label {
     margin-bottom: 5px;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 0.9em;
 }
-
-input[type="text"],
-input[type="number"] {
+input[type="date"],
+select,
+textarea {
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 1em;
+    font-family: inherit;
 }
-
-/* Estilos de Botones */
-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
+textarea {
+    resize: vertical;
 }
-
-.btn-guardar {
-    background-color: #2ecc71; /* Verde */
-    /* El botón de guardar ocupa las 2 columnas */
-    grid-column: 1 / -1; 
-}
-
-.btn-guardar:hover {
-    background-color: #27ae60;
-}
-
-.btn-cancelar {
-    background-color: #e74c3c; /* Rojo */
+/* Hacer que el motivo ocupe 2 columnas */
+.form-group:has(textarea) {
     grid-column: 1 / -1;
 }
 
-.btn-cancelar:hover {
-    background-color: #c0392b;
+/* --- Botones --- */
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+button:active {
+    transform: scale(0.98);
 }
 
-.btn-edit {
-    background-color: #3498db; /* Azul */
-    margin-right: 5px;
+.btn-guardar { background-color: #1877f2; /* Azul */ }
+.btn-guardar:hover { background-color: #166fe5; }
+
+.btn-delete { background-color: #e74c3c; /* Rojo */ }
+.btn-delete:hover { background-color: #c0392b; }
+
+.btn-admin { background-color: #f0ad4e; /* Naranja */ }
+.btn-admin:hover { background-color: #ec9b3b; }
+
+.btn-worker { background-color: #5bc0de; /* Celeste */ }
+.btn-worker:hover { background-color: #46b8da; }
+
+.btn-approve { background-color: #2ecc71; /* Verde */ }
+.btn-approve:hover { background-color: #27ae60; }
+
+.btn-reject { background-color: #e74c3c; /* Rojo */ }
+.btn-reject:hover { background-color: #c0392b; }
+
+#clock-in, #clock-out {
+    margin-right: 10px;
 }
-.btn-edit:hover {
-    background-color: #2980b9;
+form button[type="submit"] {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+}
+.login-buttons button {
+    font-size: 1.2em;
+    margin: 10px;
 }
 
-.btn-delete {
-    background-color: #e74c3c; /* Rojo */
-}
-.btn-delete:hover {
-    background-color: #c0392b;
-}
-
-
-/* Estilos de la Tabla */
-#movie-table {
+/* --- Tablas --- */
+table {
     width: 100%;
-    margin-top: 20px;
     border-collapse: collapse;
+    margin-top: 15px;
 }
-
-#movie-table th,
-#movie-table td {
+th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
-
-#movie-table th {
-    background-color: #34495e;
-    color: #fff;
+th {
+    background-color: #f5f6f7;
+    font-weight: 600;
 }
-
-/* Cebra-striping para la tabla */
-#movie-table tbody tr:nth-child(even) {
+tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
-
-#empty-message {
-    text-align: center;
-    color: #777;
-    font-style: italic;
+td button {
+    padding: 5px 8px;
+    font-size: 0.8em;
+    margin-right: 5px;
 }
