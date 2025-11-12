@@ -11,11 +11,45 @@
     <div class="container">
 
         <div id="login-view">
-            <h1>Control de Asistencia</h1>
-            <p>Seleccione su rol para continuar (simulación):</p>
-            <div class="login-buttons">
-                <button id="login-admin" class="btn-admin">Ingresar como Administrador</button>
-                <button id="login-worker" class="btn-worker">Ingresar como Trabajador</button>
+            <h1>Gestión de Asistencia y Control Horario</h1>
+            
+            <div id="login-form-container">
+                <h2>Iniciar Sesión</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-name">Nombre Completo:</label>
+                        <input type="text" id="login-name" placeholder="Ej: Juan Pérez" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña:</label>
+                        <input type="password" id="login-password" placeholder="Tu contraseña" required>
+                    </div>
+                    <button type="submit" class="btn-guardar">Ingresar</button>
+                </form>
+                <p class="toggle-text">¿No tienes cuenta? <a href="#" id="btn-show-register">Regístrate aquí</a></p>
+            </div>
+
+            <div id="register-form-container" class="hidden">
+                <h2>Registrarse</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-name">Nombre Completo:</label>
+                        <input type="text" id="reg-name" placeholder="Nombre y Apellido" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Contraseña:</label>
+                        <input type="password" id="reg-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-role">Rol:</label>
+                        <select id="reg-role" required>
+                            <option value="worker">Trabajador</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-admin">Crear Cuenta</button>
+                </form>
+                <p class="toggle-text">¿Ya tienes cuenta? <a href="#" id="btn-show-login">Inicia sesión aquí</a></p>
             </div>
         </div>
 
@@ -31,8 +65,10 @@
                 <div class="card">
                     <h3>Marcar Asistencia</h3>
                     <p>Estado actual: <strong id="worker-status">Fuera de Turno</strong></p>
-                    <button id="clock-in" class="btn-guardar">Marcar Entrada</button>
-                    <button id="clock-out" class="btn-delete">Marcar Salida</button>
+                    <div style="margin-bottom: 10px;">
+                        <button id="clock-in" class="btn-guardar">Marcar Entrada</button>
+                        <button id="clock-out" class="btn-delete">Marcar Salida</button>
+                    </div>
                     <p id="clock-message" class="message"></p>
                 </div>
 
@@ -55,7 +91,7 @@
                             <label for="end-date">Fecha de Fin:</label>
                             <input type="date" id="end-date" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group full-width">
                             <label for="reason">Motivo:</label>
                             <textarea id="reason" rows="2" placeholder="Motivo de la solicitud..."></textarea>
                         </div>
@@ -63,7 +99,7 @@
                     </form>
                 </div>
                 
-                <div class="card">
+                <div class="card full-width">
                     <h3>Mis Marcaciones (Historial)</h3>
                     <table id="worker-marks-table">
                         <thead>
@@ -76,7 +112,7 @@
                     </table>
                 </div>
 
-                <div class="card">
+                <div class="card full-width">
                     <h3>Mis Solicitudes</h3>
                     <table id="worker-requests-table">
                         <thead>
@@ -95,7 +131,7 @@
             <div id="admin-dashboard" class="dashboard hidden">
                 <h2>Panel de Administración</h2>
                 
-                <div class="card">
+                <div class="card full-width">
                     <h3>Solicitudes Pendientes</h3>
                     <table id="admin-requests-table">
                         <thead>
@@ -113,7 +149,7 @@
                     <p id="no-requests-message" class="message">No hay solicitudes pendientes.</p>
                 </div>
 
-                <div class="card">
+                <div class="card full-width">
                     <h3>Historial de Marcaciones (Todos)</h3>
                     <table id="admin-marks-table">
                         <thead>

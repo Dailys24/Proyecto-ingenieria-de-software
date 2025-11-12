@@ -14,6 +14,7 @@ body {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    min-height: 80vh;
 }
 
 h1, h2, h3 {
@@ -45,17 +46,46 @@ header {
     margin-top: 10px;
 }
 
-/* --- Vistas y Paneles --- */
+/* --- Login y Registro --- */
 #login-view {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
 }
-.login-buttons {
+
+#login-form-container, #register-form-container {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border: 1px solid #dddfe2;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: 20px;
 }
 
+#login-form-container h2, #register-form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.toggle-text {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.toggle-text a {
+    color: #1877f2;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* --- Paneles (Dashboards) --- */
 .dashboard {
     display: grid;
-    /* Dos columnas para los paneles */
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
@@ -68,26 +98,44 @@ header {
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-/* Hacer que algunas tarjetas ocupen todo el ancho */
-.card:has(table) {
+.full-width, .card:has(table) {
     grid-column: 1 / -1;
 }
 
-/* --- Formularios --- */
+/* --- Formularios Generales --- */
 form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 15px;
 }
+
+#request-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#login-form, #register-form {
+    display: flex;
+    flex-direction: column;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
 }
+
+.form-group.full-width, .form-group:has(textarea) {
+    grid-column: 1 / -1;
+}
+
 .form-group label {
     margin-bottom: 5px;
     font-weight: 600;
     font-size: 0.9em;
 }
+
+input[type="text"],
+input[type="password"],
 input[type="date"],
 select,
 textarea {
@@ -96,13 +144,11 @@ textarea {
     border-radius: 6px;
     font-size: 1em;
     font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
 }
 textarea {
     resize: vertical;
-}
-/* Hacer que el motivo ocupe 2 columnas */
-.form-group:has(textarea) {
-    grid-column: 1 / -1;
 }
 
 /* --- Botones --- */
@@ -115,39 +161,35 @@ button {
     font-size: 1em;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.1s ease;
+    width: auto;
 }
+
+#login-form button, #register-form button {
+    width: 100%;
+}
+
 button:active {
     transform: scale(0.98);
 }
 
-.btn-guardar { background-color: #1877f2; /* Azul */ }
+.btn-guardar { background-color: #1877f2; }
 .btn-guardar:hover { background-color: #166fe5; }
 
-.btn-delete { background-color: #e74c3c; /* Rojo */ }
+.btn-delete { background-color: #e74c3c; }
 .btn-delete:hover { background-color: #c0392b; }
 
-.btn-admin { background-color: #f0ad4e; /* Naranja */ }
+.btn-admin { background-color: #f0ad4e; }
 .btn-admin:hover { background-color: #ec9b3b; }
 
-.btn-worker { background-color: #5bc0de; /* Celeste */ }
-.btn-worker:hover { background-color: #46b8da; }
-
-.btn-approve { background-color: #2ecc71; /* Verde */ }
+.btn-approve { background-color: #2ecc71; }
 .btn-approve:hover { background-color: #27ae60; }
 
-.btn-reject { background-color: #e74c3c; /* Rojo */ }
+.btn-reject { background-color: #e74c3c; }
 .btn-reject:hover { background-color: #c0392b; }
 
-#clock-in, #clock-out {
-    margin-right: 10px;
-}
 form button[type="submit"] {
     grid-column: 1 / -1;
     margin-top: 10px;
-}
-.login-buttons button {
-    font-size: 1.2em;
-    margin: 10px;
 }
 
 /* --- Tablas --- */
