@@ -215,3 +215,43 @@ td button {
     font-size: 0.8em;
     margin-right: 5px;
 }
+
+/* --- Estilos Nuevos para Horarios (Gestión de Tiempos) --- */
+
+/* Inputs de hora en la tabla de admin */
+input[type="time"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+/* Etiquetas para los estados de marcación */
+.tag-late {
+    color: #e74c3c; /* Rojo */
+    font-weight: bold;
+    background-color: #fadbd8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.tag-ontime {
+    color: #2ecc71; /* Verde */
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.tag-extra {
+    color: #3498db; /* Azul */
+    font-weight: bold;
+    background-color: #d6eaf8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.tag-early {
+    color: #f39c12; /* Naranja */
+    font-size: 0.9em;
+}

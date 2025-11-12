@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Asistencia</title>
+    <title>Gestión de Asistencia y Control Horario</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -64,6 +64,7 @@
                 
                 <div class="card">
                     <h3>Marcar Asistencia</h3>
+                    <p>Tu Horario: <span id="my-schedule">--:-- a --:--</span></p>
                     <p>Estado actual: <strong id="worker-status">Fuera de Turno</strong></p>
                     <div style="margin-bottom: 10px;">
                         <button id="clock-in" class="btn-guardar">Marcar Entrada</button>
@@ -106,6 +107,7 @@
                             <tr>
                                 <th>Fecha y Hora</th>
                                 <th>Tipo</th>
+                                <th>Observación</th> 
                             </tr>
                         </thead>
                         <tbody id="worker-marks-list"></tbody>
@@ -132,6 +134,24 @@
                 <h2>Panel de Administración</h2>
                 
                 <div class="card full-width">
+                    <h3>Gestión de Personal y Horarios</h3>
+                    <p class="message" style="text-align: left; margin-bottom: 10px;">Configura horarios o elimina usuarios del sistema.</p>
+                    <table id="admin-users-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Rol</th>
+                                <th>Entrada Asignada</th>
+                                <th>Salida Asignada</th>
+                                <th>Guardar Horario</th>
+                                <th>Eliminar</th> 
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-list"></tbody>
+                    </table>
+                </div>
+
+                <div class="card full-width">
                     <h3>Solicitudes Pendientes</h3>
                     <table id="admin-requests-table">
                         <thead>
@@ -150,6 +170,22 @@
                 </div>
 
                 <div class="card full-width">
+                    <h3>Historial de Solicitudes Procesadas</h3>
+                    <table id="admin-requests-history-table">
+                        <thead>
+                            <tr>
+                                <th>Trabajador</th>
+                                <th>Tipo</th>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th>Estado Final</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-requests-history-list"></tbody>
+                    </table>
+                </div>
+
+                <div class="card full-width">
                     <h3>Historial de Marcaciones (Todos)</h3>
                     <table id="admin-marks-table">
                         <thead>
@@ -157,6 +193,7 @@
                                 <th>Trabajador</th>
                                 <th>Fecha y Hora</th>
                                 <th>Tipo</th>
+                                <th>Cálculo (Atraso/Extra)</th> 
                             </tr>
                         </thead>
                         <tbody id="admin-marks-list"></tbody>
