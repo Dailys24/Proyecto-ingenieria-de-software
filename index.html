@@ -141,6 +141,7 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th>Rol</th>
+                                <th>Jornada Predefinida</th>
                                 <th>Entrada Asignada</th>
                                 <th>Salida Asignada</th>
                                 <th>Guardar Horario</th>
@@ -203,12 +204,12 @@
             
         </div>
     </div>
-    <script src="script.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
-        //Configuración de Firebase
+        // Tu Configuración (la que acabas de encontrar)
         const firebaseConfig = {
           apiKey: "AIzaSyCKDuERu7wQTjsdqlmp6JLjrLs4eXhsMyg",
           authDomain: "cumple-con-tus-labores.firebaseapp.com",
@@ -219,10 +220,10 @@
           measurementId: "G-B15NFY5MC4"
         };
 
-        //Inicializa Firebase (versión fácil "compat")
+        // Inicializa Firebase (versión fácil "compat")
         firebase.initializeApp(firebaseConfig);
         
-        //Hacemos la base de datos (db) accesible globalmente
+        // Hacemos la base de datos (db) accesible globalmente
         const db = firebase.firestore();
     </script>
 

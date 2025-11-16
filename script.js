@@ -343,14 +343,25 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAdminMarks();
     }
 
+    // #### FUNCIÓN MODIFICADA ####
     function renderAdminUsers() {
         adminUsersList.innerHTML = '';
         users.forEach(u => {
             const roleDisplay = (u.role === 'admin') ? 'Administrador' : 'Trabajador';
             const tr = document.createElement('tr');
+            
+            // HTML para la fila, incluyendo el nuevo <select>
             tr.innerHTML = `
                 <td>${u.name}</td>
                 <td>${roleDisplay}</td>
+                <td>
+                    <select class="predefined-schedule">
+                        <option value="">Elegir jornada...</option>
+                        <option value="fijo">Jornada Fija (09:00-18:00)</option>
+                        <option value="rotativo">Turno Rotativo (07:00-15:00)</option>
+                        <option value="flexible">Jornada Flexible (10:00-19:00)</option>
+                    </select>
+                </td>
                 <td><input type="time" value="${u.workStart || '09:00'}" class="sched-start"></td>
                 <td><input type="time" value="${u.workEnd || '18:00'}" class="sched-end"></td>
                 <td><button class="btn-guardar btn-save-sched">Guardar</button></td>
@@ -363,13 +374,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 const endVal = tr.querySelector('.sched-end').value;
                 updateUserSchedule(u.id, startVal, endVal, u.name); // Pasamos u.id
             });
+            
             tr.querySelector('.btn-delete-user').addEventListener('click', () => {
                 handleDeleteUser(u.id, u.name); // Pasamos u.id
+            });
+
+            // #### NUEVO EVENT LISTENER ####
+            // Se asigna al <select> que acabamos de crear en esta fila
+            tr.querySelector('.predefined-schedule').addEventListener('change', (e) => {
+                const selectedValue = e.target.value;
+                
+                // Buscamos los inputs que están EN LA MISMA FILA (tr)
+                const startInput = tr.querySelector('.sched-start');
+                const endInput = tr.querySelector('.sched-end');
+
+                if (selectedValue === 'fijo') {
+                    startInput.value = '09:00';
+                    endInput.value = '18:00';
+                } else if (selectedValue === 'rotativo') {
+                    startInput.value = '07:00';
+                    endInput.value = '15:00';
+                } else if (selectedValue === 'flexible') {
+                    startInput.value = '10:00';
+                    endInput.value = '19:00';
+                }
             });
 
             adminUsersList.appendChild(tr);
         });
     }
+    // #### FIN DE FUNCIÓN MODIFICADA ####
+
 
     // handleDeleteUser (Ahora es async y usa db.collection('users').doc(userId).delete())
     async function handleDeleteUser(userId, name) {
